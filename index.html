@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Precision Auto | Modern Bilverkstad & Service</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #0f0f0f;    
+            --accent: #ff3240;     
+            --accent-dark: #b31d28;
+            --bg: #1a1a1a;         
+            --light-bg: #f9f9f9;   
+            --text: #333333;
+            --text-light: #eeeeee;
+            --white: #ffffff;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-glow: 0 0 15px rgba(230, 57, 70, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Oswald', sans-serif; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- DEKORATIONER --- */
+        .status-dot { height: 10px; width: 10px; background: #2ecc71; border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 8px #2ecc71; }
+        .decor-line { height: 4px; width: 60px; background: var(--accent); margin: 15px 0; border-radius: 2px; }
+
+        .section-title-wrap {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+        .section-title-wrap h2 {
+            position: relative;
+            z-index: 1;
+        }
+        .section-title-wrap::before {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: -10px;
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            opacity: 0.15;
+            z-index: 0;
+            border-radius: 4px;
+            transform: rotate(-10deg);
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; width: 100%;
+            background: rgba(15, 15, 15, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 12px 40px; 
+            display: flex;
+            justify-content: space-between; align-items: center;
+            z-index: 1000; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        nav::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, var(--accent) 50%, transparent 100%);
+            background-size: 200% 100%;
+            animation: borderGlow 4s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .logo { 
+            font-size: 1.8rem; 
+            font-weight: 900; 
+            color: var(--white); 
+            text-decoration: none; 
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            display: inline-block;
+            transform: rotate(45deg);
+            box-shadow: 0 0 10px var(--accent);
+        }
+        .logo span { color: var(--accent); }
+
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+        .nav-btn {
+            background: none; border: none; font-family: 'Oswald'; font-size: 0.85rem;
+            text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer;
+            color: rgba(255,255,255,0.8); position: relative; transition: var(--transition);
+            padding: 8px 12px;
+        }
+        .nav-btn:hover { color: var(--white); }
+        .nav-btn::after {
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: 0; left: 50%; background-color: var(--accent); transition: var(--transition);
+            transform: translateX(-50%);
+        }
+        .nav-btn:hover::after, .nav-btn.active::after { width: 80%; }
+        .nav-btn.active { color: var(--accent); font-weight: 700; }
+
+        .mobile-menu-btn { display: none; font-size: 1.5rem; color: var(--white); cursor: pointer; }
+
+        /* --- LAYOUT --- */
+        .page-section { display: none; padding-top: 80px; animation: fadeIn 0.8s ease; }
+        .page-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; filter: blur(5px); } to { opacity: 1; filter: blur(0); } }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
+        
+        .img-frame {
+            position: relative; overflow: hidden; border: 1px solid rgba(0,0,0,0.1);
+            display: inline-block; width: 100%; box-shadow: 20px 20px 60px rgba(0,0,0,0.1);
+            background: var(--primary);
+        }
+        .img-frame::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: 10px solid transparent; border-left-color: var(--accent); z-index: 2; pointer-events: none;
+        }
+        .img-frame img { width: 100%; display: block; transition: 0.8s cubic-bezier(0.2, 1, 0.3, 1); filter: contrast(1.1); }
+        .img-frame:hover img { transform: scale(1.08) rotate(1deg); }
+
+        .sub-hero {
+            height: 45vh; width: 100%;
+            background-size: cover; background-position: center;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; border-bottom: 8px solid var(--accent);
+        }
+        .sub-hero::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(15,15,15,0.4), rgba(15,15,15,0.95));
+        }
+        .sub-hero h2 { 
+            color: white !important; 
+            z-index: 1; 
+            font-size: clamp(2.5rem, 8vw, 4.5rem); 
+            letter-spacing: 8px;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* --- HOME / HERO --- */
+        .hero {
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            display: flex; align-items: center; justify-content: center; text-align: center; color: var(--white);
+            margin-top: -80px;
+            background-color: var(--primary);
+        }
+        .hero-video {
+            position: absolute; top: 50%; left: 50%;
+            min-width: 100%; min-height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover; z-index: 1;
+            filter: brightness(0.4) saturate(1.2);
+        }
+        .hero-overlay {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(15,15,15,0.8));
+            z-index: 2;
+        }
+        .hero-content { z-index: 3; max-width: 1000px; padding: 0 20px; }
+        .hero-content h1 { 
+            font-size: clamp(3.5rem, 12vw, 7rem); 
+            color: var(--white); 
+            margin-bottom: 5px; 
+            line-height: 0.85; 
+            font-weight: 900;
+            filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
+        }
+        .hero-content p { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 6px; margin-bottom: 40px; color: var(--accent); font-weight: 600; }
+
+        /* --- BUTTONS --- */
+        .cta-btn {
+            padding: 20px 50px; background: var(--accent); color: var(--white);
+            text-decoration: none; text-transform: uppercase; letter-spacing: 3px;
+            font-family: 'Oswald'; font-weight: 700; border: none; transition: var(--transition);
+            display: inline-block; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(230, 57, 70, 0.4);
+            position: relative; overflow: hidden;
+        }
+        .cta-btn:hover { background: var(--white); color: var(--accent); transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
+        .cta-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: 0.5s;
+        }
+        .cta-btn:hover::before { left: 150%; }
+
+        /* --- SERVICE GRID --- */
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; }
+        .menu-item { 
+            background: var(--white); 
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .menu-item:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); border-color: var(--accent); }
+        .menu-img-container { position: relative; overflow: hidden; height: 230px; }
+        .menu-img { height: 100%; width: 100%; object-fit: cover; transition: 0.5s; }
+        .menu-item:hover .menu-img { transform: scale(1.1); }
+        .menu-details { padding: 30px; position: relative; }
+        .price { color: var(--accent); font-weight: 900; font-size: 1.6rem; font-family: 'Oswald'; margin-top: 15px; display: block; }
+        .service-icon { position: absolute; top: -25px; right: 30px; background: var(--accent); color: white; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 4px solid var(--white); }
+
+        /* --- FOOTER --- */
+        footer { background: #0a0a0a; color: var(--white); padding: 100px 20px 40px; border-top: 8px solid var(--accent); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px; max-width: 1200px; margin: 0 auto; }
+        .footer-col h4 { color: var(--accent); margin-bottom: 30px; font-size: 1.2rem; }
+        .footer-col p { font-size: 0.95rem; line-height: 2; margin-bottom: 10px; transition: 0.3s; }
+        .footer-col p:hover { color: var(--accent); }
+
+        @media (max-width: 900px) {
+            .footer-grid { grid-template-columns: 1fr; text-align: center; }
+            .nav-links {
+                position: fixed; top: 0; right: -100%; height: 100vh; width: 85%;
+                background: var(--primary); flex-direction: column; justify-content: center;
+                align-items: center; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .nav-links.active { right: 0; box-shadow: -10px 0 50px rgba(0,0,0,0.5); }
+            .mobile-menu-btn { display: block; z-index: 1001; }
+            .split-row { grid-template-columns: 1fr !important; gap: 40px !important; }
+            .stats-grid { grid-template-columns: 1fr 1fr !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#" class="logo" onclick="showPage('home')">PRECISION<span>AUTO</span></a>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div class="status-info" style="color: white; font-size: 0.7rem; font-weight: bold; font-family: 'Oswald';">
+                <span class="status-dot"></span> ÖPPET NU
+            </div>
+            <div class="mobile-menu-btn" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+        <div class="nav-links" id="navLinks">
+            <button class="nav-btn active" onclick="showPage('home')">Start</button>
+            <button class="nav-btn" onclick="showPage('tjanster')">Tjänster</button>
+            <button class="nav-btn" onclick="showPage('om-oss')">Om Verkstaden</button>
+            <button class="nav-btn" onclick="showPage('bokning')">Boka Tid</button>
+            <button class="nav-btn" onclick="showPage('kontakt')">Kontakt</button>
+        </div>
+    </nav>
+
+    <div id="home" class="page-section active" style="padding-top: 0;">
+        <header class="hero">
+            <img src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?q=80&w=2000" class="hero-video" alt="Verkstad">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <p><i class="fas fa-star" style="font-size: 0.8rem;"></i> Auktoriserad expertis i Göteborg</p>
+                <h1>DIN BIL I TRYGGA HÄNDER</h1>
+                <div style="margin-top: 20px;">
+                    <button class="cta-btn" onclick="showPage('bokning')">Boka Service Nu</button>
+                </div>
+            </div>
+        </header>
+
+        <section class="container">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center;" class="split-row">
+                <div class="img-frame">
+                    <img src="bilverkstadmotor.png" alt="Mekaniker">
+                </div>
+                <div>
+                    <h4 style="color: var(--accent); font-weight: bold; margin-bottom: 10px;">Välkommen till framtiden</h4>
+                    <div class="section-title-wrap">
+                        <h2 style="font-size: 3.5rem; line-height: 1.1;">Kvalitet utan kompromisser</h2>
+                    </div>
+                    <div class="decor-line"></div>
+                    <p style="font-size: 1.1rem; color: #555; margin-bottom: 30px;">Vi kombinerar modern diagnostik med mångårig erfarenhet. På Precision Auto hanterar vi allt från periodisk service till avancerade motorrenoveringar. Vi använder endast originaldelar eller likvärdiga komponenter av högsta kvalitet.</p>
+                    
+                    <ul style="list-style: none; display: grid; gap: 15px;">
+                        <li><i class="fas fa-check-circle" style="color: var(--accent); margin-right: 10px;"></i> <strong>Certifierade tekniker</strong> - Utbildade av Master Mechanics</li>
+                        <li><i class="fas fa-check-circle" style="color: var(--accent); margin-right: 10px;"></i> <strong>Digital Diagnos</strong> - Modernaste utrustningen för alla märken</li>
+                        <li><i class="fas fa-check-circle" style="color: var(--accent); margin-right: 10px;"></i> <strong>Garanti</strong> - Alltid 12 månaders garanti på utfört arbete</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="tjanster" class="page-section">
+        <div class="sub-hero" style="background-image: url('https://images.unsplash.com/photo-1487754180451-c456f719c141?q=80&w=2000');">
+            <h2>Våra Tjänster</h2>
+        </div>
+        <section class="container">
+            <div style="text-align: center; margin-bottom: 60px;">
+                <h4 style="color: var(--accent);">Vårt utbud</h4>
+                <div class="section-title-wrap">
+                    <h2>Professionell Service</h2>
+                </div>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <div class="menu-img-container">
+                        <img src="https://images.unsplash.com/photo-1599256621730-535171e28e50?q=80&w=800" class="menu-img">
+                        <div class="service-icon"><i class="fas fa-oil-can"></i></div>
+                    </div>
+                    <div class="menu-details">
+                        <h3>Basservice</h3>
+                        <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 10px;">Rekommenderas varje 1500 mil</p>
+                        <p>Oljebyte, filterkontroll och 30-punkters säkerhetsgenomgång för din trygghet.</p>
+                        <span class="price">Från 1 895 kr</span>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-img-container">
+                        <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=800" class="menu-img">
+                        <div class="service-icon"><i class="fas fa-dharmachakra"></i></div>
+                    </div>
+                    <div class="menu-details">
+                        <h3>Bromsservice</h3>
+                        <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 10px;">Säkerheten först</p>
+                        <p>Kontroll och byte av belägg, skivor och bromsvätska. Vi testar alltid bromsverkan.</p>
+                        <span class="price">Från 995 kr</span>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-img-container">
+                        <img src="https://images.unsplash.com/photo-1562623111-5e6bc5271960?q=80&w=800" class="menu-img">
+                        <div class="service-icon"><i class="fas fa-truck-monster"></i></div>
+                    </div>
+                    <div class="menu-details">
+                        <h3>Däck & Balans</h3>
+                        <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 10px;">Komplett däckverkstad</p>
+                        <p>Hjulskifte, balansering och däckhotell för dina sommar/vinterhjul i rätt temperatur.</p>
+                        <span class="price">Från 400 kr</span>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-img-container">
+                        <img src="https://images.unsplash.com/photo-1632733711679-5292d6863670?q=80&w=800" class="menu-img">
+                        <div class="service-icon"><i class="fas fa-laptop-code"></i></div>
+                    </div>
+                    <div class="menu-details">
+                        <h3>Felsökning</h3>
+                        <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 10px;">Digital expertis</p>
+                        <p>Fullständig digital diagnos av bilens styrsystem och elektronik med senaste mjukvaran.</p>
+                        <span class="price">950 kr</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="om-oss" class="page-section">
+        <div class="sub-hero" style="background-image: url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2000');">
+            <h2>Om Verkstaden</h2>
+        </div>
+
+        <section class="container">
+            <div style="text-align: center; max-width: 800px; margin: 0 auto 80px;">
+                <h3 style="color: var(--accent); letter-spacing: 3px; font-size: 1rem; margin-bottom: 15px;">Vår Historia</h3>
+                <div class="section-title-wrap">
+                    <h2 style="font-size: 3rem; line-height: 1.2;">Precision sedan 1998</h2>
+                </div>
+                <p style="font-size: 1.2rem; color: #666;">Precision Auto startades med en enkel vision: att erbjuda Göteborgs mest noggranna bilservice. Idag är vi ett team av specialister som kombinerar hantverksskicklighet med den absolut senaste tekniken inom fordonsdiagnostik.</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; margin-bottom: 100px;">
+                <div style="text-align: center; padding: 40px 30px; background: #fff; border-bottom: 5px solid var(--accent); box-shadow: 0 15px 40px rgba(0,0,0,0.05); border-radius: 8px;">
+                    <i class="fas fa-tools" style="font-size: 3rem; color: var(--accent); margin-bottom: 25px;"></i>
+                    <h4>Modern Teknik</h4>
+                    <p style="font-size: 0.95rem; opacity: 0.8; margin-top: 15px;">Vi investerar kontinuerligt i de senaste diagnosverktygen för att möta kraven från moderna hybrid- och elbilar.</p>
+                </div>
+                <div style="text-align: center; padding: 40px 30px; background: #fff; border-bottom: 5px solid var(--primary); box-shadow: 0 15px 40px rgba(0,0,0,0.05); border-radius: 8px;">
+                    <i class="fas fa-certificate" style="font-size: 3rem; color: var(--accent); margin-bottom: 25px;"></i>
+                    <h4>Auktoriserade</h4>
+                    <p style="font-size: 0.95rem; opacity: 0.8; margin-top: 15px;">Våra tekniker är certifierade och genomgår löpande utbildningar för att hålla högsta branschstandard.</p>
+                </div>
+                <div style="text-align: center; padding: 40px 30px; background: #fff; border-bottom: 5px solid var(--accent); box-shadow: 0 15px 40px rgba(0,0,0,0.05); border-radius: 8px;">
+                    <i class="fas fa-handshake" style="font-size: 3rem; color: var(--accent); margin-bottom: 25px;"></i>
+                    <h4>Personlig Service</h4>
+                    <p style="font-size: 0.95rem; opacity: 0.8; margin-top: 15px;">Hos oss är du inte bara ett reg-nummer. Vi förklarar alltid arbetet så att du känner dig trygg med ditt beslut.</p>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;" class="split-row">
+                <div>
+                    <div class="section-title-wrap">
+                        <h2>I hjärtat av Göteborg</h2>
+                    </div>
+                    <div class="decor-line"></div>
+                    <p>Vår anläggning på 600 kvadratmeter är utrustad med åtta moderna lyftstationer och en dedikerad avdelning för avancerad elektronik och däckservice. Vi håller alltid en ren och organiserad miljö.</p>
+                    <br>
+                    <p>Vi är stolta medlemmar i branschorganisationer och följer strikta miljöprotokoll för hantering av avfall och kemikalier.</p>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <img src="https://images.unsplash.com/photo-1530046339160-ce3e5b0c7a2f?q=80&w=600" style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px; box-shadow: 10px 10px 30px rgba(0,0,0,0.1);" alt="Verkstad vy">
+                    <img src="https://images.unsplash.com/photo-1625047509168-a7026f36de04?q=80&w=600" style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px; box-shadow: 10px 10px 30px rgba(0,0,0,0.1);" alt="Mekaniker">
+                    <img src="https://images.unsplash.com/photo-1504222490345-c075b6008014?q=80&w=600" style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px; grid-column: span 2; box-shadow: 10px 10px 30px rgba(0,0,0,0.1);" alt="Verktyg">
+                </div>
+            </div>
+        </section>
+
+        <div style="background: linear-gradient(135deg, #0f0f0f 0%, #222 100%); color: white; padding: 100px 0; border-top: 2px solid var(--accent);">
+            <div class="container stats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; text-align: center;">
+                <div>
+                    <h2 style="color: var(--accent); font-size: 3.5rem; margin: 0; text-shadow: var(--border-glow);">25+</h2>
+                    <p style="text-transform: uppercase; font-size: 0.85rem; letter-spacing: 2px; opacity: 0.7;">Års Erfarenhet</p>
+                </div>
+                <div>
+                    <h2 style="color: var(--accent); font-size: 3.5rem; margin: 0; text-shadow: var(--border-glow);">15k</h2>
+                    <p style="text-transform: uppercase; font-size: 0.85rem; letter-spacing: 2px; opacity: 0.7;">Nöjda Kunder</p>
+                </div>
+                <div>
+                    <h2 style="color: var(--accent); font-size: 3.5rem; margin: 0; text-shadow: var(--border-glow);">8</h2>
+                    <p style="text-transform: uppercase; font-size: 0.85rem; letter-spacing: 2px; opacity: 0.7;">Lyftstationer</p>
+                </div>
+                <div>
+                    <h2 style="color: var(--accent); font-size: 3.5rem; margin: 0; text-shadow: var(--border-glow);">100%</h2>
+                    <p style="text-transform: uppercase; font-size: 0.85rem; letter-spacing: 2px; opacity: 0.7;">Garantifokus</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bokning" class="page-section">
+        <div class="sub-hero" style="background-image: url('https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=2000');">
+            <h2>Boka Tid</h2>
+        </div>
+        <section class="container" style="max-width: 900px;">
+            <div style="background: white; padding: 60px; border-radius: 8px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.1);">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: linear-gradient(90deg, var(--primary), var(--accent));"></div>
+                <h3 style="margin-bottom: 10px; font-size: 2rem;">Serviceförfrågan</h3>
+                <p style="margin-bottom: 30px; color: #777;">Fyll i formuläret så återkommer vi inom 2 timmar.</p>
+                
+                <form action="#" method="POST">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;" class="split-row">
+                        <input type="text" placeholder="FULLSTÄNDIGT NAMN" required style="width: 100%; padding: 18px; border: 2px solid #eee; outline: none; border-radius: 4px;">
+                        <input type="text" placeholder="REGISTRERINGSNUMMER" required style="width: 100%; padding: 18px; border: 2px solid #eee; outline: none; border-radius: 4px;">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;" class="split-row">
+                        <input type="email" placeholder="E-POSTADRESS" required style="width: 100%; padding: 18px; border: 2px solid #eee; outline: none; border-radius: 4px;">
+                        <input type="tel" placeholder="TELEFONNUMMER" required style="width: 100%; padding: 18px; border: 2px solid #eee; outline: none; border-radius: 4px;">
+                    </div>
+                    <textarea rows="5" placeholder="Beskriv problemet..." style="width: 100%; padding: 18px; border: 2px solid #eee; outline: none; border-radius: 4px; margin-bottom: 30px;"></textarea>
+                    <button type="submit" class="cta-btn" style="width: 100%;">Skicka Bokningsförfrågan</button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <div id="kontakt" class="page-section">
+        <section class="container">
+            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0; box-shadow: 0 40px 100px rgba(0,0,0,0.15); border-radius: 12px; overflow: hidden;" class="split-row">
+                <div style="height: 600px;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2133.484224056263!2d11.913764816041632!3d57.64335808110292!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x464f8ca5a94749d9%3A0xe543e33c66f68c37!2zVmVya3N0YWRzZ2F0YW4sIDQyMSA3MyBWw6RzdHJhIEZyw7ZsdW5kYQ!5e0!3m2!1ssv!2sse!4v1700000000000!5m2!1ssv!2sse" width="100%" height="100%" style="border:0; filter: grayscale(1) contrast(1.2);" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div style="background: var(--primary); color: white; padding: 60px; display: flex; flex-direction: column; justify-content: center;">
+                    <div class="section-title-wrap">
+                        <h2 style="color: white; font-size: 2.5rem;">Hitta Hit</h2>
+                    </div>
+                    <div style="margin-bottom: 35px; display: flex; gap: 20px;">
+                        <i class="fas fa-location-dot" style="color: var(--accent); font-size: 1.5rem;"></i>
+                        <div>
+                            <p style="color: var(--accent); font-weight: bold;">ADRESS</p>
+                            <p>Verkstadsgatan 4<br>421 73 Västra Frölunda</p>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 35px; display: flex; gap: 20px;">
+                        <i class="fas fa-clock" style="color: var(--accent); font-size: 1.5rem;"></i>
+                        <div>
+                            <p style="color: var(--accent); font-weight: bold;">ÖPPETTIDER</p>
+                            <p>Mån-Tor: 07:00 - 17:00<br>Fre: 07:00 - 15:00</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 20px;">
+                        <i class="fas fa-phone-volume" style="color: var(--accent); font-size: 1.5rem;"></i>
+                        <div>
+                            <p style="color: var(--accent); font-weight: bold;">KONTAKT</p>
+                            <p>031 - 45 67 89<br>info@precisionauto.se</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <a href="#" class="logo" style="color: white;">PRECISION<span>AUTO</span></a>
+                <p style="margin-top: 20px; opacity: 0.6;">Professionell fordonsvård i Göteborg sedan 1998.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigering</h4>
+                <p style="cursor: pointer;" onclick="showPage('home')">Start</p>
+                <p style="cursor: pointer;" onclick="showPage('tjanster')">Tjänster</p>
+                <p style="cursor: pointer;" onclick="showPage('bokning')">Boka Tid</p>
+            </div>
+            <div class="footer-col">
+                <h4>Socialt</h4>
+                <div style="display: flex; gap: 20px; font-size: 1.5rem; margin-top: 10px;">
+                    <i class="fab fa-facebook-f"></i>
+                    <i class="fab fa-instagram"></i>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 60px; opacity: 0.4; font-size: 0.8rem;">
+            © 2026 PRECISION AUTO AB. ALL RIGHTS RESERVED.
+        </div>
+    </footer>
+
+    <script>
+        function showPage(pageId) {
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            const navBtns = document.querySelectorAll('.nav-btn');
+            navBtns.forEach(btn => btn.classList.remove('active'));
+
+            const activeSection = document.getElementById(pageId);
+            if (activeSection) {
+                activeSection.classList.add('active');
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }
+
+            navBtns.forEach(btn => {
+                if(btn.getAttribute('onclick').includes(pageId)) {
+                    btn.classList.add('active');
+                }
+            });
+            document.getElementById('navLinks').classList.remove('active');
+        }
+
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.menu-item, .img-frame, .container > div').forEach(el => {
+            el.style.opacity = 0;
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.8s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
